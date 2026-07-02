@@ -1,0 +1,3 @@
+# hardware structures
+
+def lfsr
