@@ -1,50 +1,58 @@
 # cyclic redundancy check codes 
 import gf
-import numpy as np 
+import cir
+# import numpy as np 
 
-def encode(u, g, k, state =0):
-	'''Cyclic code systematic encoder <v(x) = u(x).g(x)> ref:4.5 textbook'''
-	v =u;
-
-	for clk in range(k):
-		u_bit = (u & 1)
-		state = lfsr_clk(u_bit, state, (g >> 1))
-		u >>= 1;
-
-	v = (state << k) | v;
-	return v
-
-def syndrome_chk(r, g, n, k):
-	'''syndrome to check if r(x) codeword or not '''
-	state =0
+def encode(n, k, /, u, g, parity =0):
+	'''Systematic Cyclic Code encoder
+	INPUTS:
+	----------
+	(n, k) :(int,int)	/codebook params
+	u :int k bits		/information source
+	g :int n-k+1 bits	/generator polynomial of degree 'n-k'
+	pariy :int n-k bits	/parity check polynomial (initially at rest)
+	----------
+	OUTPUTS:
+	----------
+	codeword :int n bits/codeword polynomial
+	'''
+	codeword =0b0
+	taps = g ^ (g & 1)
+	lfsr_par = (taps, n-k)
+	# clock through n _codeword length_
 	for clk in range(n):
-		state |= ((r&1) << n-k)
-		state =yet_another_lfsr(state, g)
-		r >>=1
-	return state
+		u_clk, u =cir.bit_pop(u)
+
+		parity = cir.lfsr(*lfsr_par, state =parity, sin =u_clk)
+		if(clk < k):
+			codeword ^= (u_clk << clk)
+	codeword ^= (parity <<k)
+
+	return codeword
+
+def syndrome(n, k, /, r, g, synd =0):
+	'''Syndrome polynomial calculation function
+	INPUTS:
+	----------
+	(n, k) :(int,int)	/codebook params
+	r :int n bits		/received codeword
+	g :int n-k+1 bits	/generator polynomial of degree 'n-k'
+	synd :int n-k bits	/syndrome polynomial (initially at rest)
+	----------
+	OUTPUTS:
+	----------
+	synd :int n-k bits/syndrome polynomial
+	'''
+	synd =0b0	
+	taps = g ^ (g & 1)
+	lfsr_par = (taps, n-k)
+	#clock through n _recieved massage 'r'_
+	for clk in range(n):
+		r_clk, r =cir.bit_pop(r)
+
+		synd = cir.lfsr(*lfsr_par, state =synd, sin =r_clk)
+
+	return synd
 
 def decode():
 	pass
-
-
-def lfsr_clk(u_bit, state, taps):
-	'''fig 4.1 from text book'''
-	gate = u_bit ^ (state & 1)
-	if (gate):
-		state >>= 1
-		state ^= taps
-	else:
-		state >>= 1
-
-	return state
-
-def yet_another_lfsr(state, taps):
-	'''synd lfsr '''
-	taps = taps ^ (taps & 1)
-	gate = (state & 1)
-	if (gate):
-		state ^= taps
-		state >>=1
-	else:
-		state >>=1
-	return state

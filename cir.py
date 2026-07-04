@@ -1,3 +1,20 @@
-# hardware structures
+# hardware structures per clock cycle:
 
-def lfsr
+def bit_pop(bits :int):
+	return (bits & 1), (bits >> 1)
+
+def lfsr(taps :int, mem :int =0, /, state :int =0, sin :bool =0):
+
+	gate1 = (state & 1)
+	state |= (sin << mem)
+	state ^= taps if(gate1) else 0
+	state >>= 0b1
+
+	return state
+
+def fir():
+	pass
+
+def errpat_detect():
+	pass
+
