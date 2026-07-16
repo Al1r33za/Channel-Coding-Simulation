@@ -1,56 +1,51 @@
 # tools for making finite Galois field:
+# import time
 
-def XOR(a :bool, b :bool):
-	return (a ^ b) 
-
-def AND(a :bool, b :bool):
-	return (a and b)
-
-def add(m :int, a, b):
-	''' xor in extended field '''
-	n = 2**m
-	if bool((a | b) >> m):
-		a %= n
-		b %= n
-
-	return a ^ b
-
-def mul(m :int, a, b, v):
+def mul(a :int, b :int, v :int) -> int:
 	''' multiplication in extended field '''
-	n = 2**m
+	m = v[2]
+	n = (1 << m)
 	if bool((a | b) >> m):
-		a %= n
-		b %= n
-	if (a == 0 | b == 0):
+		a %= (n-1)
+		b %= (n-1)
+	if (a == 0 or b == 0):
 		return 0;
 	
-	i = v.index(a);
-	j = v.index(b);
-	xk = v[(i+j) % n];
+	i =v[1][a]
+	j =v[1][b]
+	xk = v[0][(i+j) % (n-1)]
 	return xk
 
-def div(m :int, a, b, v):
+def div(a, b, v):
 	''' division in extended field '''
-	n = 2**m
+	m = v[2]
+	n = (1 << m)
 	if bool((a | b) >> m):
-		a %= n
-		b %= n
+		a %= (n-1)
+		b %= (n-1)
+	if (b == 0):
+		raise ZeroDivisionError
 
-	i = v.index(a);
-	j = v.index(b);
-	xk = v[(i-j) % n];
+	i =v[1][a]
+	j =v[1][b]
+	xk = v[0][(i-j) % (n-1)]
 	return xk
 
-def generator(m :int, p):
-	''' function for generating table of power to decimal form'''
+def exfield_gen(m :int, g):
+	''' generates extended field GF(2^m) '''
 	n =(1 << m);
 	x =(1 << m);
-	v =[0] * (n-1);
+	exp =[0] * (n-1)
+	log =[0] * (n)
 
 	for i in range(n -1):
-		x = (x >> 1);
-		v[i] = x;
+		x = (x >> 1)
+		exp[i] = x
+		log[x] = i
 
 		if(x & 1):
-			x = (x ^ p);
-	return v
+			x = (x ^ g);
+	return exp, log, m
+
+
+
