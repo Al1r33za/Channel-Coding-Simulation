@@ -2,3 +2,5 @@
 /.ipynb_checkpoints/
 *.sublime-project
 *.sublime-workspace
+/.vscode/
+*workspace*

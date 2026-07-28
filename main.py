@@ -1,2 +1,2 @@
+import gf
 
-# import test.gf

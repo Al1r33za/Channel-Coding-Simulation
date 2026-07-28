@@ -1,4 +1,5 @@
 # hardware structures per clock cycle:
+import gf
 
 def bit_pop(bits :int):
 	return (bits & 1), (bits >> 1)
@@ -16,8 +17,9 @@ def lfsr(taps :int, mem :int =0, /, state :int =0, sin :bool =0):
 
 	return state
 
+
 def fir(taps :int, mem :int , /, state =0, sin =0):
 	pass
+
 def errpat_detect():
 	pass
-

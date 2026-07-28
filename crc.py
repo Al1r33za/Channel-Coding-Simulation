@@ -4,13 +4,14 @@ import cir
 # import numpy as np 
 
 def encode(n, k, /, u, g, parity =0):
-	'''Systematic Cyclic Code encoder
-	INPUTS:
-	----------
-	(n, k) :(int,int)	/codebook params
-	u :int k bits		/information source
-	g :int n-k+1 bits	/generator polynomial of degree 'n-k'
-	pariy :int n-k bits	/parity check polynomial (initially at rest)
+	'''Systematic Cyclic Code encoder.
+
+	INPUTS: 
+	---------- 
+	(n, k) :(int,int)	/codebook params 
+	u :int k bits		/information source 
+	g :int n-k+1 bits	/generator polynomial of degree 'n-k' 
+	pariy :int n-k bits	/parity check polynomial (initially at rest) 
 	----------
 	OUTPUTS:
 	----------
@@ -31,13 +32,14 @@ def encode(n, k, /, u, g, parity =0):
 	return codeword
 
 def syndrome(n, k, /, r, g, synd =0):
-	'''Syndrome polynomial calculation function
+	'''Syndrome polynomial calculation function.
+
 	INPUTS:
 	----------
-	(n, k) :(int,int)	/codebook params
-	r :int n bits		/received codeword
-	g :int n-k+1 bits	/generator polynomial of degree 'n-k'
-	synd :int n-k bits	/syndrome polynomial (initially at rest)
+	(n, k) -- codebook params
+	r -- received codeword
+	g -- generator polynomial of degree 'n-k'
+	synd -- syndrome polynomial (initially at rest)
 	----------
 	OUTPUTS:
 	----------
