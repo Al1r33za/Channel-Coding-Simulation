@@ -56,4 +56,4 @@ def exfield_gen(m :int, g :int) -> tuple:
 
 		if(x & 1):
 			x = (x ^ g)
-	return exp, log, m
+	return exp, log, m, g
