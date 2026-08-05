@@ -1,7 +1,9 @@
 
 from gf import *
 import cir, poly
-def encode(n, k, t, /, u :list, gen :list, field :tuple):
+def encode(n, k, t, /, u:list, gen:list, field):
+	pass
+def encode_textbook(n, k, t, /, u :list, gen :list, field):
 	''' Encode non-binary bch code with length 'n'.'''
 	alph =field[0]
 	loga =field[1]
@@ -44,8 +46,8 @@ def syndrome(n, k, t, /, r :list, field) -> tuple:
 	return S
 
 f = exfield_gen(4, 0b11001)
-b = [f[0][0], f[0][5], f[0][10]]
+# b = [f[0][0], f[0][5], f[0][10]]
 
-print(syndrome(15, 9, 2, r =[b[2], 0, b[1], b[2], 0, b[1], b[0]
-							 , b[1], b[0], 0, 0, 0, 0, b[1], b[0]], field =f))
+# print(syndrome(15, 9, 2, r =[b[2], 0, b[1], b[2], 0, b[1], b[0]
+# 							 , b[1], b[0], 0, 0, 0, 0, b[1], b[0]], field =f))
 

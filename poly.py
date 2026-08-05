@@ -24,7 +24,7 @@ def conv_mul(a :list, b :list, field) -> tuple:
 
 	return c
 
-def scale(a, scale, field):
+def shift_scale(a :list, shift :int, scale :int, field):
 	pass
 
 def long_div(a :list, b :list, field) -> tuple:
@@ -36,7 +36,7 @@ def long_div(a :list, b :list, field) -> tuple:
 	lenb =len(b)
 	lena =len(a)
 	q = [0]*(lena - lenb + 1)
-	r = a
+	r = a[:]
 	for lead in range(1, lena - lenb +2):
 		q[-lead] = div(r[-lead], b[-1], field)
 		

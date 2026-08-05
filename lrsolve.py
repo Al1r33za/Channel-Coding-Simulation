@@ -60,24 +60,6 @@ def berlekamp_massey(S :list, field):
 def BM(S :list, field):
 	pass
 
-def Euclidean(S :list, field):
-	'''Euclidean algortihm.
-
-	Key Argument:
-	S(X) -- polynomial 
-	field -- field elements
-	'''
-	alph =field[0]
-	X2t = [0]*(len(S))
-	X2t.append(alph[0])
-
-	q1, r1 =poly.long_div(X2t, S, field)
-	#
-	# Update ... 
-	# This became O(n^3) so im not gonna use it!
-	pass
-
-
 def chien_search(L :list, field):
 	''' Search for roots of 'L'.'''
 	alph =field[0]
@@ -101,6 +83,24 @@ def chien_search(L :list, field):
 			roots.append(expo[beta])
 
 	return roots
+
+def Euclidean(S :list, field):
+	'''Euclidean algortihm.
+
+	Key Argument:
+	S(X) -- polynomial 
+	field -- field elements
+	'''
+	alph =field[0]
+	X2t = [0]*(len(S))
+	X2t.append(alph[0])
+
+	q1, r1 =poly.long_div(X2t, S, field)
+	#
+	# Update ... 
+	# This became O(n^3) so im not gonna use it!
+	pass
+
 
 # field =exfield_gen(4, 0b11001); a =field[0]
 # S =[a[0], a[0], a[10], a[0], a[10], a[5]]
