@@ -25,8 +25,8 @@ def berlekamp_massey(S :list, field):
 
 	C[0] =alph[0]			# connection poly
 	B[0] =alph[0]			# last connection poly
-	L = 0               	# connection poly degree
-	m = 1 					# m = mu - rho
+	L = 0               	# connection poly degree L = len(B)
+	shift = 1 				# shift = mu - rho
 	d =alph[0]; b = alph[0]	# current/last discrepancy
 
 	for mu in range(_2t):
@@ -37,27 +37,27 @@ def berlekamp_massey(S :list, field):
 			d ^= mul(C[i], S[mu - i], field)
 
 		if (d == 0):
-			m += 1
+			shift += 1
 		else:
 			T = C.copy()
 			A = div(d, b, field)
 
 			# Connection poly modification
 			for i in range(L + 1):
-				C[i + m] ^= mul(A, B[i], field)		# correction term: A.X^m.B_i
+				C[i + shift] ^= mul(A, B[i], field)		# correction term: A.X^m.B_i
 
 			if (2*L) <= mu:
 				L = mu + 1 - L
 				B = T
 				b = d
-				m = 1
+				shift = 1
 			else:
-				m += 1
+				shift += 1
 
 	# res = [field[1][x] for x in C[:L+1]]
 	return C[:L+1]
 
-def berlekamp_massey_binary(S, field):
+def BM(S :list, field):
 	pass
 
 def Euclidean(S :list, field):
@@ -72,8 +72,9 @@ def Euclidean(S :list, field):
 	X2t.append(alph[0])
 
 	q1, r1 =poly.long_div(X2t, S, field)
-
-
+	#
+	# Update ... 
+	# This became O(n^3) so im not gonna use it!
 	pass
 
 
