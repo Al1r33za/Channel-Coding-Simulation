@@ -1,12 +1,13 @@
 # algorithms for solving linear recursion
 
 from gf import exfield_gen, mul, div
+import poly
 # m =4
 # g =0b11001
 # field =exfield_gen(m, g)
 # alph  =field[0]
 
-def berlekamp_massey(S, field):
+def berlekamp_massey(S :list, field):
 	''' berlekamp_massey algorithm for constructing needed LFSR
 	INPUTS:
 	---------------------------
@@ -30,7 +31,7 @@ def berlekamp_massey(S, field):
 
 	for mu in range(_2t):
 
-		# linear recursion
+		# compute discrepancy
 		d =S[mu]
 		for i in range(1, L+1):
 			d ^= mul(C[i], S[mu - i], field)
@@ -59,20 +60,25 @@ def berlekamp_massey(S, field):
 def berlekamp_massey_binary(S, field):
 	pass
 
-def Euclidean(a, b, field):
+def Euclidean(S :list, field):
 	'''Euclidean algortihm.
 
 	Key Argument:
-	a -- polynomial
-	b -- polynomial
+	S(X) -- polynomial 
 	field -- field elements
 	'''
-	
-	pass
-def chien_search(L :list, field):
-	'''
-	'''
+	alph =field[0]
+	X2t = [0]*(len(S))
+	X2t.append(alph[0])
 
+	q1, r1 =poly.long_div(X2t, S, field)
+
+
+	pass
+
+
+def chien_search(L :list, field):
+	''' Search for roots of 'L'.'''
 	alph =field[0]
 	expo =field[1]
 	m    =field[2]
@@ -86,9 +92,9 @@ def chien_search(L :list, field):
 		Lj = 0
 		ax =alph[0]
 
-		for lami in L:
-			Lj ^=mul(lami, ax, field)
-			ax =mul(ax, beta, field)
+		for ll in L:
+			Lj ^=mul(ll, ax, field)
+			ax = mul(ax, beta, field)
 
 		if (Lj == 0):
 			roots.append(expo[beta])

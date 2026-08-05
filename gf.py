@@ -9,7 +9,7 @@ def mul(a :int, b :int, v :tuple) -> int:
 		a %= (n-1)
 		b %= (n-1)
 	if (a == 0 or b == 0):
-		return 0;
+		return 0
 	
 	i =v[1][a]
 	j =v[1][b]
@@ -25,6 +25,8 @@ def div(a :int, b :int, v :tuple) -> int:
 		b %= (n-1)
 	if (b == 0):
 		raise ZeroDivisionError
+	if(a == 0):
+		return 0
 
 	i =v[1][a]
 	j =v[1][b]
