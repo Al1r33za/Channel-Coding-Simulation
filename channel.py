@@ -1,17 +1,21 @@
 # transmitting signal using bpsk modulation through AWGN channel
-import numpy as np
+import random as rn
 
-def modulation(b :bool, eb =1):
-	sm = ((2*eb)**.5)*(1- 2*b);
+def modulation(b :int, Eb =1):
+	sm = Eb *(1- 2*b)
 	return sm
 
 def demodulation(r):
-	if (r > 0):
-		return 0
-	else:
-		return 1
+	return 0 if r>0 else 1
 
 def awgn(sm, N0=1):
-	n = ((N0/2)**.5)*np.random.randn();
-	r = sm + n;
+	n = rn.normalvariate(0, (N0/2)**.5)
+	r = sm + n
 	return r
+
+def AWGN(EbN0, stream, N0 =1):
+	Eb =1.0
+	N0 = Eb / EbN0
+	s = modulation(stream, Eb)
+	r = awgn(s, N0)
+	return demodulation(r)

@@ -8,20 +8,13 @@ import poly
 # alph  =field[0]
 
 def berlekamp_massey(S :list, field):
-	''' berlekamp_massey algorithm for constructing needed LFSR
-	INPUTS:
-	---------------------------
-	S: list of int				/ input syndrome
-	field: tuple of lists
-	OUTPUTS:
-	---------------------------
-	Lambd: list of int			/ output error locator
+	''' Find error locator polynomial (sigma).
 	'''
 	alph  =field[0]
 
-	_2t =len(S)
-	C =[0] * (_2t+1)
-	B =[0] * (_2t+1)
+	t =len(S)//2
+	C =[0] * (2*t+1)
+	B =[0] * (2*t+1)
 
 	C[0] =alph[0]			# connection poly
 	B[0] =alph[0]			# last connection poly
@@ -29,7 +22,7 @@ def berlekamp_massey(S :list, field):
 	shift = 1 				# shift = mu - rho
 	d =alph[0]; b = alph[0]	# current/last discrepancy
 
-	for mu in range(_2t):
+	for mu in range(2*t):
 
 		# compute discrepancy
 		d =S[mu]
@@ -58,29 +51,75 @@ def berlekamp_massey(S :list, field):
 	return C[:L+1]
 
 def BM(S :list, field):
-	pass
+	''' Find error locator polynomial (sigma).
+	'''
+	alph  =field[0]
+
+	t =len(S)//2
+	C =[0] * (2*t+1)
+	B =[0] * (2*t+1)
+
+	C[0] =alph[0]			# connection poly
+	B[0] =alph[0]			# last connection poly
+	L = 0               	# connection poly degree L = len(B)
+	shift = 1 				# shift = mu - rho
+	d =alph[0]; b = alph[0]	# current/last discrepancy
+
+	for mu in range(2*t):
+
+		# compute discrepancy
+		d =S[mu]
+		for i in range(1, L+1):
+			d ^= mul(C[i], S[mu - i], field)
+
+		if (d == 0):
+			shift += 1
+		else:
+			T = C.copy()
+			A = div(d, b, field)
+
+			# Connection polynomial modification
+			for i in range(L + 1):
+				C[i + shift] ^= mul(A, B[i], field)		# correction term: A.X^m.B_i
+
+			if (2*L) <= mu:
+				L = mu + 1 - L
+				B = T
+				b = d
+				shift = 1
+			else:
+				shift += 1
+
+	# res = [field[1][x] for x in C[:L+1]]
+	Z = poly.conv(S, C, field)
+	Z = Z[:len(S)]
+
+	return C, Z
 
 def chien_search(L :list, field):
-	''' Search for roots of 'L'.'''
-	alph =field[0]
-	expo =field[1]
-	m    =field[2]
-	n =(1 << m) - 1
-	l =len(L)
-	roots=[]
+	'''Search for roots of the locator polynomial L.
 
-	for j in range(n):
+	Returns the actual field elements that make the polynomial vanish, not their
+	exponent tags. That is what the higher-level RS decoder expects for the
+	Forney evaluator and location conversion in `rs.decode`.
+	'''
+	alph = field[0]
+	loga = field[1]
+	m    = field[2]
+	n = (1 << m) - 1
+	roots = []
 
-		beta =alph[j]
-		Lj = 0
-		ax =alph[0]
-
+	for i in range(n):
+		beta = alph[i]
+		ai = alph[0]
+		Lai = 0
+		
 		for ll in L:
-			Lj ^=mul(ll, ax, field)
-			ax = mul(ax, beta, field)
+			Lai^= mul(ll,   ai, field)
+			ai  = mul(ai, beta, field)
 
-		if (Lj == 0):
-			roots.append(expo[beta])
+		if Lai == 0:
+			roots.append(beta)
 
 	return roots
 
@@ -98,13 +137,13 @@ def Euclidean(S :list, field):
 	q1, r1 =poly.long_div(X2t, S, field)
 	#
 	# Update ... 
-	# This became O(n^3) so im not gonna use it!
+	# The complextity of this function is O(n^3) so im not gonna use it!
 	pass
 
 
-# field =exfield_gen(4, 0b11001); a =field[0]
+# f16 =exfield_gen(4, 0b11001); a =f16[0]
 # S =[a[0], a[0], a[10], a[0], a[10], a[5]]
 # L =[a[5], 0, a[0], a[0]]
 
-# assert [a[0], a[0], 0, a[5]] == berlekamp_massey(S, field)
-# assert [3, 5, 12] == chien_search(L, field)
+# assert [a[0], a[0], 0, a[5]] == berlekamp_massey(S, f16)
+# assert [3, 5, 12] == chien_search(L, f16)

@@ -4,7 +4,7 @@ import gf
 def bit_pop(bits :int):
 	return (bits & 1), (bits >> 1)
 
-def lfsr(taps :int, mem :int =0, /, state :int =0, sin :bool =0):
+def lfsr(taps :int, mem :int, /, state :int =0, sin :bool =0):
 	'''lfsr hardware model(per clock cycle).
 
 	Key Arguments:
@@ -17,8 +17,6 @@ def lfsr(taps :int, mem :int =0, /, state :int =0, sin :bool =0):
 	state |= (sin << mem)
 	if(gate1):
 		state ^= taps
-	else:
-		state  = 0
 		
 	state >>= 1
 
@@ -38,25 +36,18 @@ def fir(taps :int, mem :int , /, state :int=0, sin :bool=0):
 
 	return gate
 
-def sym2bits(k :int, B :list) -> int:
+def sym2bits(k :int, s :int):
 	'''map symbols to bits by k'''
-	frame =0
-	frames=0
-	for bb in B:
-		frames ^= (bb << frame)
-		frame += k
+	for i in range(k):
+		yield (s >> i) & 1
 
-	return frames
+def bits2sym(B :list):
+	'''map received bits to symbols'''
+	s = 0
+	for i, bb in enumerate(B):
+		s += (bb << i)
 
-def bits2sym(k :int, S :int) -> list:
-	'''map received bits to symbols by k'''
-	frame =(1 << k) - 1
-	Sym = []
-	while S > 0:
-		Sym.append(S & frame)
-		S >>= k
-
-	return Sym
+	return s
 
 
 def errpat_detect():

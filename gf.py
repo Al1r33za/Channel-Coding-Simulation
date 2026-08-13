@@ -44,6 +44,11 @@ def power(b :int, p :int, field :tuple) -> int:
 	b =e[b]
 	return a[(b * p) % n]
 
+def inv(a :int, field :tuple) -> int:
+	if a == 0:
+		raise ZeroDivisionError
+	return power(a, -1, field)
+
 def exfield_gen(m :int, g :int) -> tuple:
 	''' generate extended field whit characteristic 2. '''
 	n =(1 << m)

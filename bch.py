@@ -1,5 +1,5 @@
 # BCH impelementaion:
-import gf, cir, crc
+import gf, crc
 from lrsolve import berlekamp_massey
 import lrsolve
 
@@ -10,44 +10,40 @@ def encode(n, k, /, u, g):
 	return crc.encode(*(n,k), u =u, g =g)
 
 def syndrome(n, k, t, /, r, field):
-	''' syndrome calculation for bch(n,k,t)
-	(n, k): int, int 		/ information/codewrod length
-	r: 		int 			/ received polynomial
-	g:		int 			/ minimal generator
+	''' calculate syndrome for binary bch.
 	'''
 	alph =field[0]
-	expo =field[1]
+	a1 =alph[1]		# narrow sense ...
 
-	S =[0] *(2*t)
+	S =[0]*2*t
 
 	for i in range(2*t):
-		beta =alph[i+1]
 		S[i] =0
-
+		mask =(1<<n)
+		r_masked = r | mask
 		for j in range(n):
-
-			if (r >> (n-1-j)) & 1:
-				S[i] ^= gf.power(beta, j, field)
+			r_j = (r_masked >> (n-j-1)) & 1
+			if r_j:
+				aij = gf.power(a1, ((i+1)*j), field)
+				S[i] ^= aij
+			else:
+				continue
 
 	return S
 
 def decode(n, k, t, /, r, field):
+	''' decode bch code.
 	'''
-	'''
+	loga =field[1]
 	S   = syndrome(*(n, k, t), r, field)
 	Sig = berlekamp_massey(S, field)
 	Sig.reverse()
+
 	err_loc = lrsolve.chien_search(Sig, field)
-
-	print(f'error locations: {err_loc}')
+	mask = 1 << n
+	r_masked = r | mask
 	for ej in err_loc:
-		r ^= (1 << (n-1-ej))
-	return r
+		r_masked ^= (1 << (n-loga[ej]-1))
 
-C =(15, 5, 3); field =gf.exfield_gen(4, 0b11001); a =field[0]
-# 
-# assert syndrome(*C, r =0b000_101_000_000_100, field =field) == [a[0], a[0], a[10], a[0], a[10], a[5]]
-# assert decode(*(15, 5, 3), r =0b000_101_000_000_100, field =field) == 0
-
-print(syndrome(*C, r =0b011000001, field =field))
-print(syndrome(*C, r =0b111000001, field =field))
+	u_star = r_masked & ((1<<k)-1)
+	return u_star, r_masked, S
