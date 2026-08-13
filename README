@@ -1,0 +1,68 @@
+# Channel Coding
+
+A comprehensive handout and reference guide for channel coding theory and applications.
+
+## Overview
+
+This repository contains educational materials, examples, and resources on channel coding techniques used in digital communications systems.
+
+## Contents
+
+### Topics Covered
+
+- **Error-Correcting Codes**
+  - Block codes (Hamming, BCH, Reed-Solomon)
+  - Convolutional codes
+  - LDPC codes
+  - Turbo codes
+
+- **Channel Models**
+  - AWGN (Additive White Gaussian Noise)
+  - Fading channels
+  - Burst error channels
+
+- **Encoding and Decoding**
+  - Maximum likelihood decoding
+  - Viterbi algorithm
+  - Belief propagation
+  - Iterative decoding
+
+- **Performance Analysis**
+  - Bit Error Rate (BER)
+  - Coding gain
+  - Shannon limit
+
+## Getting Started
+
+1. Review the handout materials for theoretical foundations
+2. Study the code examples and implementations
+3. Work through the problems and exercises
+4. Explore performance simulations
+
+## Prerequisites
+
+- Digital communications fundamentals
+- Linear algebra
+- Probability theory
+- Basic programming knowledge (Python/MATLAB recommended)
+
+## Usage
+
+Each topic includes:
+- Theoretical explanations
+- Mathematical formulations
+- Practical examples
+- Code implementations
+- Practice problems
+
+## Resources
+
+- Reference materials on coding theory
+- Implementation examples
+- Simulation frameworks
+- Performance benchmarks
+
+## License
+
+Educational material for learning purposes.
+
