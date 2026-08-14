@@ -6,7 +6,7 @@ import rs
 import gf
 import channel
 
-random.seed(1337)
+random.seed()
 
 
 def bit_count(x: int) -> int:
@@ -20,6 +20,7 @@ def crc_sim(EbN0_db: float, n: int = 7,
             k: int = 4, g: int = 0b1101, frames: int = 1000):
     """Cyclic code error-correcting using error traping. (corrects just one bit if there is more decoder fails)"""
     EbN0 = 10 ** (EbN0_db / 10.0)
+    R =k/n
     frame_errors = 0
     total_bits = 0
 
@@ -30,7 +31,7 @@ def crc_sim(EbN0_db: float, n: int = 7,
         received_codeword = 0
         for idx in range(n):
             b =(codeword >> idx) & 1
-            r =channel.AWGN(EbN0, b)
+            r =channel.AWGN(EbN0, b, R =R)
             received_codeword |= (r & 1) << idx
 
         syndrome = crc.syndrome(n, k, received_codeword, g)
@@ -50,7 +51,7 @@ def bch_sim(EbN0_db: float, m =4,
         field = gf.exfield_gen(m, 0b11001)
     
     EbN0 = 10 ** (EbN0_db / 10.0)
-
+    R =k/n
     frame_errors = 0
     total_bits = 0
 
@@ -61,7 +62,7 @@ def bch_sim(EbN0_db: float, m =4,
         received_codeword =0
         for idx in range(n):
             b= (codeword >> idx) & 1
-            r = channel.AWGN(EbN0, b)
+            r = channel.AWGN(EbN0, b, R =R)
             received_codeword |= (r & 1) << idx
 
         decoded, _, _ = bch.decode(n, k, t, received_codeword, field)
@@ -96,7 +97,7 @@ def rs_sim(EbN0_db: float, field =(),q =4, m =2,
         raise ValueError('code parameters are not provided.')
 
     EbN0 = 10 ** (EbN0_db / 10.0)
-
+    R =k/n
     frame_error = 0
     total_bits = 0
 
@@ -107,7 +108,7 @@ def rs_sim(EbN0_db: float, field =(),q =4, m =2,
 
         # send symbols (map them to bits)
         for symbol in codeword:
-            r = [channel.AWGN(EbN0, stream) for stream in cir.sym2bits(q, symbol)]
+            r = [channel.AWGN(EbN0, stream, R =R) for stream in cir.sym2bits(q, symbol)]
             received_symbols.append(cir.bits2sym(r))
 
         # decode received symbols:
@@ -122,10 +123,10 @@ def rs_sim(EbN0_db: float, field =(),q =4, m =2,
     return BER, frame_error, total_bits
 
 def main():
-    SNRs = [i/10 for i in range(-100, 101, 5)]
+    SNRs = [i/10 for i in range(-50, 101, 1)]
     results =[]
     for ebn0 in SNRs:
-        ber, bit_err, total_bit = crc_sim(ebn0, frames=5000)
+        ber, bit_err, total_bit = crc_sim(ebn0, frames=100_000)
         results.append((ebn0, ber, bit_err, total_bit))
     with open("./SIM_FILES/crc_ber.csv", 'w', newline='') as f:
         fwriter = csv.writer(f)
@@ -134,7 +135,7 @@ def main():
 
     results =[]
     for ebn0 in SNRs:
-        ber, bit_err, total_bit = bch_sim(ebn0, frames=5000)
+        ber, bit_err, total_bit = bch_sim(ebn0, frames=100_000)
         results.append((ebn0, ber, bit_err, total_bit))
     with open("./SIM_FILES/bch_ber.csv", 'w', newline='') as f:
         fwriter = csv.writer(f)
@@ -143,7 +144,7 @@ def main():
 
     results =[]
     for ebn0 in SNRs:
-        ber, bit_err, total_bit = rs_sim(ebn0, frames=1000)
+        ber, bit_err, total_bit = rs_sim(ebn0, frames=100_000)
         results.append((ebn0, ber, bit_err, total_bit))
     with open("./SIM_FILES/rs_ber.csv", 'w', newline='') as f:
         fwriter = csv.writer(f)
